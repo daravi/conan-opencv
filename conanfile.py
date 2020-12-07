@@ -40,7 +40,8 @@ class OpenCVConan(ConanFile):
                "ffmpeg": [True, False],
                "lapack": [True, False],
                "parallel": ["tbb", "openmp", None],
-               "quirc": [True, False]}
+               "quirc": [True, False],
+               "with_highgui": [True, False]}
     default_options = {"shared": False,
                        "fPIC": True,
                        "contrib": False,
@@ -67,7 +68,8 @@ class OpenCVConan(ConanFile):
                        "ffmpeg": False,
                        "lapack": False,
                        "parallel": None,
-                       "quirc": True}
+                       "quirc": True,
+                       "with_highgui": True}
     exports_sources = ["CMakeLists.txt", "patches/*.patch"]
     exports = "LICENSE"
     generators = "cmake"
@@ -382,6 +384,9 @@ class OpenCVConan(ConanFile):
         # quirc
         cmake.definitions['WITH_QUIRC'] = self.options.quirc
 
+        # HighGUI
+        cmake.definitions['BUILD_opencv_highgui'] = self.options.with_highgui
+
         # TIFF
         cmake.definitions['BUILD_TIFF'] = False
         cmake.definitions['WITH_TIFF'] = self.options.tiff
@@ -514,6 +519,9 @@ class OpenCVConan(ConanFile):
             # https://github.com/opencv/opencv/blob/4.0.1/modules/gapi/cmake/DownloadADE.cmake#L2
             opencv_libs.append("gapi")
 
+        if not self.options.with_highgui:
+            opencv_libs.remove("highgui")
+        
         if self.options.contrib:
             opencv_libs = [
                 "aruco",

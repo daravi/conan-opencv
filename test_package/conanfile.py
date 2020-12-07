@@ -13,6 +13,7 @@ class TestPackageConan(ConanFile):
 
     def build(self):
         cmake = CMake(self)
+        cmake.definitions['TEST_GUI'] = self.options["opencv"].with_highgui
         cmake.configure()
         cmake.build()
 
@@ -26,11 +27,12 @@ class TestPackageConan(ConanFile):
         img_path = os.path.join(self.source_folder, "lena.jpg")
         shutil.copy(img_path, 'bin')
         with tools.chdir('bin'):
-            self.run('lena.exe' if self.settings.os == 'Windows' else './lena', run_environment=True)
+            if self.options["opencv"].with_highgui:
+                self.run('lena.exe' if self.settings.os == 'Windows' else './lena', run_environment=True)
             test_images = []
             if self.options["opencv"].jpeg:
                 test_images.append('lena.jpg')
-            if self.options["opencv"].libtiff != False:
+            if self.options["opencv"].tiff != False:
                 test_images.append('normal.tiff')
                 if self.options["libtiff"].lzma != False:
                     test_images.append('lzma.tiff')
