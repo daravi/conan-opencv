@@ -7,8 +7,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 CONAN_BASIC_SETUP()
 
-ADD_EXECUTABLE(lena  lena.cpp)
-TARGET_LINK_LIBRARIES(lena ${CONAN_LIBS})
+if(TEST_GUI)
+	ADD_EXECUTABLE(lena  lena.cpp)
+	TARGET_LINK_LIBRARIES(lena ${CONAN_LIBS})
+endif()
 
 ADD_EXECUTABLE(load-image load-image.cpp)
 TARGET_LINK_LIBRARIES(load-image ${CONAN_LIBS})
